@@ -1,4 +1,3 @@
-# Persistent Volume and Claim for MySQL
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -23,8 +22,6 @@ spec:
     requests:
       storage: 1Gi
   volumeName: mysql-pv
-
-# Persistent Volume and Claim for WordPress
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -49,8 +46,6 @@ spec:
     requests:
       storage: 1Gi
   volumeName: wordpress-pv
-
-# Secret for MySQL password (base64 for "password")
 ---
 apiVersion: v1
 kind: Secret
@@ -59,8 +54,6 @@ metadata:
 type: Opaque
 data:
   password: cGFzc3dvcmQ=
-
-# MySQL Deployment
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -103,8 +96,6 @@ spec:
         - name: mysql-storage
           persistentVolumeClaim:
             claimName: mysql-pvc
-
-# MySQL Service
 ---
 apiVersion: v1
 kind: Service
@@ -115,8 +106,6 @@ spec:
     app: mysql
   ports:
     - port: 3306
-
-# WordPress Deployment
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -156,18 +145,16 @@ spec:
         - name: wordpress-storage
           persistentVolumeClaim:
             claimName: wordpress-pvc
-
-# WordPress Service (LoadBalancer)
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: wordpress-service
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: wordpress
   ports:
     - port: 80
       targetPort: 80
-
+      nodePort: 8080 
